@@ -1,0 +1,28 @@
+# data
+data/*
+!data/README.md
+
+# models
+models/*
+!models/.gitkeep
+
+# python
+__pycache__/
+*.py[cod]
+.Python
+*.egg-info/
+
+# venv
+venv/
+.venv/
+env/
+
+# jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# system
+.DS_Store
+Thumbs.db
