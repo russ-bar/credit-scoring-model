@@ -14,6 +14,8 @@ The classes are imbalanced: about 7% of borrowers default.
 
 The project consists of 3 notebooks, each focusing on a specific stage of the machine learning pipeline: Exploratory Data Analysis (EDA), Feature Engineering, and Modeling. Imputation and percentile capping are part of the model pipeline and are fitted on the training folds only, to prevent data leakage.
 
+The Kaggle test file has no labels, so 20% of `cs-training.csv` is held out as the test set. The EDA was done on the full labelled data and was used to define data-cleaning rules; all fitted steps (imputation, capping, hyperparameter tuning, threshold selection) use the training set only.
+
 ## Results
 
 ### Model comparison (5-fold cross-validation on the training set)
@@ -43,9 +45,9 @@ XGBoost with default parameters overfits (train AUC 0.941 vs CV 0.842). The fina
 
 - **Special codes 96/98 in the delinquency counters.** 269 records have values 96 or 98 in all three counters. These are far outside the normal range and distort the correlations. The default rate in this group is much higher than in the rest of the data, so instead of removing these records, the codes were replaced with -1 and a flag `IsSpecialStatus` was added.
 
-- **`DebtRatio` is not a ratio when income is missing.** 94% of records without income data have `DebtRatio` above 1, so for these records the value is not debt divided by income. `DebtRatio` was set to missing for records with missing or zero income, and a flag `IsIncomeMissing` was added.
+- **`DebtRatio` is not a ratio when income is missing.** 94% of records without income data have `DebtRatio` above 1, so for these records the value is not debt divided by income. `DebtRatio` was set to missing for records with missing or zero income. A separate flag `IsIncomeMissing` marks records where income is not available.
 
-- **Most important features.** `RevolvingUtilizationOfUnsecuredLines` and past-due history (`TotalNumberPastDue`, the sum of the delinquency counters) have the strongest impact on predictions, both in the EDA and in SHAP. The default rate rises from 2.5% in the lowest utilization decile to 23% in the highest, and a single 90+ days past-due event increases it from 4.6% to 33.7%.
+- **Most important features.** `RevolvingUtilizationOfUnsecuredLines` and past-due history are the strongest predictors, both in the EDA (the individual delinquency counters) and in SHAP (`TotalNumberPastDue`, the sum of the counters). The default rate rises from 1.4% at low utilization to 23% in the highest utilization decile, and a single 90+ days past-due event increases it from 4.6% to 33.7%. Clients with utilization close to zero are an exception: their default rate (2.5%) is higher than at low utilization.
 
 ## Project structure
 
